@@ -61,7 +61,7 @@ int main(){
 
         tempo = tempo_final - tempo_inicial;
 
-        printf("Duração desta operação: %d\n\n", tempo);
+        printf("Tempo levado: %d\n\n", tempo);
     }
     else{ 
         wait(NULL);
@@ -93,7 +93,7 @@ int main(){
         info_e2 = gmtime(&end_t);
         tempo_final2 = info_e2->tm_sec;
         tempo2 = tempo_final2 - tempo_inicial2;
-        printf("Duração desta operação: %d\n\n", tempo2);
+        printf("Tempo levado: %d\n\n", tempo2);
    
     }
 
