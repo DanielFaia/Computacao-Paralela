@@ -1,0 +1,101 @@
+// Aluno: Daniel Faia Monteiro da Silva
+// TIA: 31932029
+// Obs: Código escrito e compilado no repl.it
+
+#include <stdio.h>
+#include <unistd.h>
+#include <time.h>
+#include <sys/types.h>
+#include <sys/shm.h>
+
+
+int main(){
+
+    pid_t childpid;
+    int shm_id;
+
+    shm_id = shmget(IPC_PRIVATE, 1024, IPC_CREAT |  0660);
+         if (shm_id < 0) {
+            printf("shmget error\n");
+        }
+
+    int *x = (int*)shmat(shm_id, NULL, 0);
+    int vetor_A[5] = {1,2,3,4,5};
+    int vetor_B[5] = {5,4,3,2,1};
+
+    printf("Digite o número que vai multiplicar: ");
+    scanf("%d", x);
+
+    childpid = fork();
+    
+
+    if (childpid == 0){
+        time_t start_t, end_t;
+        int tempo;
+        int tempo_inicial;
+        int tempo_final;
+        struct tm *info_s;
+        struct tm *info_e;
+
+        printf("ID Pai = %i\n",childpid);
+        time(&start_t);
+
+        info_s = gmtime(&start_t);
+
+        tempo_inicial = info_s->tm_sec;
+
+        printf("Novo vetor = { ");
+        for(int i=0;i<5;i++){
+            vetor_A[i] = vetor_A[i] * (*x);
+            printf("%d ", vetor_A[i]);
+        }
+        printf("}\n");
+
+        sleep(1);
+
+        time(&end_t);
+
+        info_e = gmtime(&end_t);
+
+        tempo_final = info_e->tm_sec;
+
+        tempo = tempo_final - tempo_inicial;
+
+        printf("Duração desta operação: %d\n\n", tempo);
+    }
+    else{ 
+        wait(NULL);
+
+        time_t start_t, end_t;
+        int tempo2;
+        int tempo_inicial2;
+        int tempo_final2;
+        struct tm *info_s2;
+        struct tm *info_e2;
+
+        printf("ID da operação filho = %i\n",childpid);
+
+        time(&start_t);
+
+        info_s2 = gmtime(&start_t);
+
+        tempo_inicial2 = info_s2->tm_sec;
+
+        printf("Novo vetor = { ");
+
+        for(int j=0;j<5;j++){
+            vetor_B[j] = vetor_B[j] * vetor_A[j];
+            printf("%d ", vetor_B[j]);
+        }
+
+        printf("}\n");
+        time(&end_t);
+        info_e2 = gmtime(&end_t);
+        tempo_final2 = info_e2->tm_sec;
+        tempo2 = tempo_final2 - tempo_inicial2;
+        printf("Duração desta operação: %d\n\n", tempo2);
+   
+    }
+
+    return 0;
+}
